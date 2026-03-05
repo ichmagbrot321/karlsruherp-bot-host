@@ -3,702 +3,840 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BotPanel — Discord Bot Host</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<title>BotPanel v2</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --surface2: #1a1a24;
-    --border: #2a2a3a;
-    --accent: #5865f2;
-    --accent2: #7289da;
-    --green: #23d18b;
-    --red: #f14668;
-    --yellow: #ffca28;
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-    --font-mono: 'JetBrains Mono', monospace;
-    --font-display: 'Syne', sans-serif;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-mono);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+:root{--bg:#07070d;--s1:#0f0f18;--s2:#171724;--s3:#1f1f2e;--border:#252538;--accent:#5865f2;--a2:#7289da;--green:#23d18b;--red:#f14668;--yellow:#fbbf24;--text:#e2e2f0;--muted:#5a5a72;--font:'JetBrains Mono',monospace;--display:'Syne',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
 
-  /* ── Login ── */
-  #login-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: radial-gradient(ellipse at 50% 0%, #1a1a3a 0%, var(--bg) 70%);
-  }
-  .login-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 48px;
-    width: 380px;
-    box-shadow: 0 0 80px rgba(88,101,242,0.15);
-    animation: fadeUp 0.5s ease;
-  }
-  .login-box h1 { font-family: var(--font-display); font-size: 28px; font-weight: 800; margin-bottom: 4px; }
-  .login-box p { color: var(--muted); font-size: 13px; margin-bottom: 32px; }
-  .logo-glow { color: var(--accent); text-shadow: 0 0 20px rgba(88,101,242,0.6); }
-  input[type="password"], input[type="text"], textarea {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 14px;
-    padding: 12px 14px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  input:focus, textarea:focus { border-color: var(--accent); }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-family: var(--font-mono);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-decoration: none;
-  }
-  .btn:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(88,101,242,0.4); }
-  .btn-full { width: 100%; justify-content: center; margin-top: 16px; }
-  .btn-sm { padding: 7px 14px; font-size: 12px; border-radius: 6px; }
-  .btn-danger { background: var(--red); }
-  .btn-danger:hover { background: #c0392b; box-shadow: 0 4px 20px rgba(241,70,104,0.4); }
-  .btn-success { background: #1a9e6a; }
-  .btn-success:hover { background: var(--green); box-shadow: 0 4px 20px rgba(35,209,139,0.3); }
-  .btn-ghost { background: var(--surface2); color: var(--muted); }
-  .btn-ghost:hover { background: var(--border); color: var(--text); box-shadow: none; }
-  .error-msg { color: var(--red); font-size: 13px; margin-top: 12px; text-align: center; display: none; }
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse 80% 60% at 50% -10%,#1a1a3a,transparent)}
+.login-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:52px 44px;width:400px;box-shadow:0 0 100px rgba(88,101,242,.12);animation:up .5s ease}
+.login-card h1{font-family:var(--display);font-size:30px;font-weight:800;margin-bottom:6px}
+.login-card h1 span{color:var(--accent);text-shadow:0 0 24px rgba(88,101,242,.5)}
+.login-card p{color:var(--muted);font-size:13px;margin-bottom:36px}
+label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font);font-size:13px;padding:11px 14px;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+select{cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#fff;border:none;border-radius:9px;padding:11px 18px;font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--a2);transform:translateY(-1px);box-shadow:0 6px 24px rgba(88,101,242,.35)}
+.btn-full{width:100%;justify-content:center;margin-top:14px}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
+.btn-xs{padding:4px 9px;font-size:11px;border-radius:6px}
+.btn-red{background:var(--red)}
+.btn-red:hover{background:#c0392b;box-shadow:0 6px 24px rgba(241,70,104,.3)}
+.btn-green{background:#1a9e6a}
+.btn-green:hover{background:var(--green);box-shadow:0 6px 24px rgba(35,209,139,.25)}
+.btn-ghost{background:var(--s2);color:var(--muted)}
+.btn-ghost:hover{background:var(--s3);color:var(--text);box-shadow:none;transform:none}
+.btn-yellow{background:#92610a;color:var(--yellow)}
+.btn-yellow:hover{background:#b07a0e;box-shadow:none;transform:none}
+.err{color:var(--red);font-size:12px;margin-top:10px;text-align:center;display:none}
 
-  /* ── Layout ── */
-  #app { display: none; }
-  .layout { display: flex; min-height: 100vh; }
-  
-  /* ── Sidebar ── */
-  .sidebar {
-    width: 220px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    padding: 20px 0;
-    position: fixed;
-    left: 0; top: 0; bottom: 0;
-    z-index: 100;
-  }
-  .sidebar-logo {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 800;
-    padding: 0 20px 24px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 12px;
-  }
-  .sidebar-logo span { color: var(--accent); }
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 20px;
-    cursor: pointer;
-    color: var(--muted);
-    font-size: 13px;
-    transition: all 0.15s;
-    border-left: 3px solid transparent;
-  }
-  .nav-item:hover { color: var(--text); background: var(--surface2); }
-  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,101,242,0.08); }
-  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
-  .sidebar-bottom { margin-top: auto; padding: 20px; border-top: 1px solid var(--border); }
-  .logout-btn { cursor: pointer; color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 8px; }
-  .logout-btn:hover { color: var(--red); }
+/* LAYOUT */
+#app{display:none}
+.layout{display:flex;min-height:100vh}
 
-  /* ── Main ── */
-  .main {
-    margin-left: 220px;
-    flex: 1;
-    padding: 32px;
-    min-height: 100vh;
-  }
-  .page { display: none; }
-  .page.active { display: block; animation: fadeUp 0.3s ease; }
-  
-  .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 28px;
-  }
-  .page-title {
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 700;
-  }
-  .page-title small { display: block; font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+/* SIDEBAR */
+.sidebar{width:230px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:0;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-logo{font-family:var(--display);font-size:17px;font-weight:800;padding:20px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.sidebar-logo span{color:var(--accent)}
+.nav-section{padding:14px 14px 4px;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--muted);font-size:13px;transition:all .15s;border-left:3px solid transparent;margin:1px 0}
+.nav-item:hover{color:var(--text);background:var(--s2)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,101,242,.07)}
+.nav-icon{font-size:15px;width:18px;text-align:center}
+.sidebar-footer{margin-top:auto;padding:16px;border-top:1px solid var(--border)}
+.sidebar-footer .logout{cursor:pointer;color:var(--muted);font-size:12px;display:flex;align-items:center;gap:8px;transition:color .15s}
+.sidebar-footer .logout:hover{color:var(--red)}
 
-  /* ── Bot Cards ── */
-  .bots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-  .bot-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .bot-card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(88,101,242,0.2); }
-  .bot-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
-  .bot-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; }
-  .bot-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
-  }
-  .status-online { background: rgba(35,209,139,0.15); color: var(--green); }
-  .status-offline { background: rgba(107,107,128,0.15); color: var(--muted); }
-  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-  .status-online .status-dot { animation: pulse 2s infinite; }
-  .bot-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+/* MAIN */
+.main{margin-left:230px;flex:1;padding:28px 32px;min-height:100vh}
+.page{display:none}
+.page.active{display:block;animation:up .25s ease}
+.page-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:12px}
+.page-hdr-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.page-title{font-family:var(--display);font-size:20px;font-weight:700}
+.page-title small{display:block;font-family:var(--font);font-size:11px;color:var(--muted);font-weight:400;margin-top:3px}
 
-  /* ── Create Modal ── */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1000;
-    display: none;
-    backdrop-filter: blur(4px);
-  }
-  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    width: 480px;
-    max-width: 95vw;
-    animation: fadeUp 0.3s ease;
-  }
-  .modal h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 24px; }
-  .form-group { margin-bottom: 16px; }
-  .form-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: block; }
-  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.stat-val{font-family:var(--display);font-size:30px;font-weight:800}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:3px}
 
-  /* ── Console / Logs ── */
-  .console-box {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    height: 400px;
-    overflow-y: auto;
-    font-size: 12px;
-    line-height: 1.8;
-  }
-  .console-box::-webkit-scrollbar { width: 5px; }
-  .console-box::-webkit-scrollbar-track { background: transparent; }
-  .console-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  .log-line { display: flex; gap: 12px; }
-  .log-time { color: var(--muted); min-width: 80px; }
-  .log-stdout { color: var(--text); }
-  .log-stderr { color: var(--red); }
-  .log-system { color: var(--yellow); }
+/* BOT CARDS */
+.bots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.bot-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px;transition:border-color .2s,box-shadow .2s}
+.bot-card:hover{border-color:rgba(88,101,242,.4);box-shadow:0 0 0 1px rgba(88,101,242,.1)}
+.bot-card-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.bot-name{font-family:var(--display);font-size:14px;font-weight:700}
+.bot-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-on{background:rgba(35,209,139,.12);color:var(--green)}
+.badge-off{background:rgba(90,90,114,.12);color:var(--muted)}
+.dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.badge-on .dot{animation:pulse 2s infinite}
+.bot-actions{display:flex;gap:7px;flex-wrap:wrap}
 
-  /* ── File Editor ── */
-  .editor-layout { display: grid; grid-template-columns: 200px 1fr; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; height: 500px; }
-  .file-list { background: var(--surface2); border-right: 1px solid var(--border); overflow-y: auto; padding: 8px 0; }
-  .file-item { padding: 8px 16px; font-size: 13px; cursor: pointer; color: var(--muted); display: flex; align-items: center; gap: 8px; transition: all 0.15s; }
-  .file-item:hover { background: var(--border); color: var(--text); }
-  .file-item.active { background: rgba(88,101,242,0.2); color: var(--accent); }
-  .editor-area { display: flex; flex-direction: column; }
-  .editor-toolbar { padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .editor-filename { font-size: 12px; color: var(--muted); }
-  textarea.code-editor {
-    flex: 1;
-    background: var(--bg);
-    border: none;
-    border-radius: 0;
-    resize: none;
-    font-size: 13px;
-    line-height: 1.7;
-    padding: 16px;
-    tab-size: 2;
-    color: var(--text);
-    font-family: var(--font-mono);
-  }
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(6px)}
+.overlay.open{display:flex;animation:fade .2s}
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:32px;width:500px;max-width:96vw;max-height:90vh;overflow-y:auto;animation:up .3s ease}
+.modal h2{font-family:var(--display);font-size:17px;font-weight:700;margin-bottom:22px}
+.form-row{margin-bottom:14px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
 
-  /* ── Stats ── */
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-  }
-  .stat-value { font-family: var(--font-display); font-size: 32px; font-weight: 800; }
-  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .stat-online { color: var(--green); }
-  .stat-total { color: var(--accent); }
+/* CONSOLE */
+.console-wrap{background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.console-bar{background:var(--s1);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.console-bar .dot-red{background:#f14668;width:10px;height:10px;border-radius:50%}
+.console-bar .dot-yellow{background:#fbbf24;width:10px;height:10px;border-radius:50%}
+.console-bar .dot-green{background:#23d18b;width:10px;height:10px;border-radius:50%}
+.console-out{height:420px;overflow-y:auto;padding:14px 16px;font-size:12px;line-height:1.9}
+.console-out::-webkit-scrollbar{width:4px}
+.console-out::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.log-line{display:flex;gap:10px;word-break:break-all}
+.log-t{color:var(--muted);min-width:72px;flex-shrink:0}
+.log-out{color:var(--text)}
+.log-err{color:var(--red)}
+.log-sys{color:var(--yellow)}
+.console-input-row{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:var(--s1)}
+.console-input-row input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--font);font-size:12px;padding:8px 12px}
 
-  /* ── Utilities ── */
-  .tag { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; font-size: 11px; color: var(--muted); }
-  .sep { height: 1px; background: var(--border); margin: 24px 0; }
-  .flex-center { display: flex; align-items: center; gap: 10px; }
-  .mb-16 { margin-bottom: 16px; }
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+/* FILE MANAGER */
+.fm-layout{display:grid;grid-template-columns:240px 1fr;border:1px solid var(--border);border-radius:14px;overflow:hidden;height:560px}
+.fm-tree{background:var(--s2);border-right:1px solid var(--border);overflow-y:auto;padding:8px 0}
+.fm-tree::-webkit-scrollbar{width:3px}
+.fm-tree::-webkit-scrollbar-thumb{background:var(--border)}
+.tree-item{display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:12px;cursor:pointer;color:var(--muted);transition:all .12s;user-select:none;position:relative}
+.tree-item:hover{background:var(--s3);color:var(--text)}
+.tree-item.active{background:rgba(88,101,242,.15);color:var(--accent)}
+.tree-item .tree-icon{width:14px;text-align:center;flex-shrink:0}
+.tree-item .tree-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tree-item .tree-del{opacity:0;font-size:10px;color:var(--red);transition:opacity .1s}
+.tree-item:hover .tree-del{opacity:1}
+.fm-editor{display:flex;flex-direction:column}
+.fm-toolbar{padding:8px 14px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fm-toolbar-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.fm-filename{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+textarea.code{flex:1;background:var(--bg);border:none;resize:none;color:var(--text);font-family:var(--font);font-size:12px;line-height:1.75;padding:14px 16px;tab-size:2;outline:none}
 
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+/* PACKAGES */
+.pkg-box{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px}
+.pkg-list{margin-top:14px;display:flex;flex-direction:column;gap:6px}
+.pkg-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--s2);border-radius:8px;font-size:12px}
+.pkg-name{color:var(--text)}
+.install-output{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:11px;line-height:1.8;max-height:200px;overflow-y:auto;margin-top:12px;display:none;color:var(--green)}
+
+/* DRAG DROP */
+.drop-zone{border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;transition:all .2s;cursor:pointer;color:var(--muted);font-size:13px}
+.drop-zone.over{border-color:var(--accent);background:rgba(88,101,242,.05);color:var(--text)}
+.drop-zone .drop-icon{font-size:36px;margin-bottom:10px}
+
+/* BACKUP */
+.backup-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;align-items:flex-start;gap:16px}
+.backup-icon{font-size:32px;flex-shrink:0}
+
+/* UTILS */
+.sep{height:1px;background:var(--border);margin:20px 0}
+.tag{background:var(--s2);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-size:11px;color:var(--muted)}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty .empty-ico{font-size:42px;margin-bottom:14px}
+.flex{display:flex;align-items:center;gap:8px}
+.mb14{margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-box">
-    <h1><span class="logo-glow">Bot</span>Panel</h1>
+  <div class="login-card">
+    <h1>🤖 <span>Bot</span>Panel</h1>
     <p>Dein persönlicher Discord Bot Host</p>
-    <div class="form-group">
-      <label class="form-label">Passwort</label>
-      <input type="password" id="pw-input" placeholder="••••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="form-row">
+      <label>Passwort</label>
+      <input type="password" id="pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
     </div>
-    <button class="btn btn-full" onclick="doLogin()">🔐 Einloggen</button>
-    <div class="error-msg" id="login-error">Falsches Passwort!</div>
+    <button class="btn btn-full" onclick="login()">🔐 Einloggen</button>
+    <div class="err" id="login-err">Falsches Passwort oder Backend nicht erreichbar!</div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
   <div class="layout">
-    <!-- Sidebar -->
     <nav class="sidebar">
       <div class="sidebar-logo">🤖 <span>Bot</span>Panel</div>
-      <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
-        <span class="nav-icon">⚡</span> Dashboard
-      </div>
-      <div class="nav-item" onclick="showPage('bots')" id="nav-bots">
-        <span class="nav-icon">🤖</span> Meine Bots
-      </div>
-      <div class="nav-item" onclick="showPage('console')" id="nav-console">
-        <span class="nav-icon">🖥</span> Konsole
-      </div>
-      <div class="nav-item" onclick="showPage('files')" id="nav-files">
-        <span class="nav-icon">📁</span> Dateien
-      </div>
-      <div class="sidebar-bottom">
-        <div class="logout-btn" onclick="doLogout()">🚪 Abmelden</div>
+      <div class="nav-section">Übersicht</div>
+      <div class="nav-item active" onclick="nav('dashboard')" id="nav-dashboard"><span class="nav-icon">⚡</span>Dashboard</div>
+      <div class="nav-item" onclick="nav('bots')" id="nav-bots"><span class="nav-icon">🤖</span>Meine Bots</div>
+      <div class="nav-section">Verwaltung</div>
+      <div class="nav-item" onclick="nav('console')" id="nav-console"><span class="nav-icon">🖥</span>Konsole</div>
+      <div class="nav-item" onclick="nav('files')" id="nav-files"><span class="nav-icon">📁</span>Dateien</div>
+      <div class="nav-item" onclick="nav('packages')" id="nav-packages"><span class="nav-icon">📦</span>Packages</div>
+      <div class="nav-section">Tools</div>
+      <div class="nav-item" onclick="nav('backup')" id="nav-backup"><span class="nav-icon">💾</span>Backup</div>
+      <div class="nav-item" onclick="nav('upload')" id="nav-upload"><span class="nav-icon">⬆</span>Upload</div>
+      <div class="sidebar-footer">
+        <div class="logout" onclick="logout()">🚪 Abmelden</div>
       </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="main">
 
-      <!-- Dashboard -->
+      <!-- DASHBOARD -->
       <div class="page active" id="page-dashboard">
-        <div class="page-header">
+        <div class="page-hdr">
           <div class="page-title">Dashboard <small>Willkommen zurück!</small></div>
         </div>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-value stat-total" id="stat-total">0</div>
-            <div class="stat-label">Bots gesamt</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value stat-online" id="stat-online">0</div>
-            <div class="stat-label">Online</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" style="color:var(--muted)" id="stat-offline">0</div>
-            <div class="stat-label">Offline</div>
-          </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-val" id="s-total" style="color:var(--accent)">0</div><div class="stat-lbl">Bots gesamt</div></div>
+          <div class="stat-card"><div class="stat-val" id="s-online" style="color:var(--green)">0</div><div class="stat-lbl">Online</div></div>
+          <div class="stat-card"><div class="stat-val" id="s-offline" style="color:var(--muted)">0</div><div class="stat-lbl">Offline</div></div>
         </div>
         <div class="sep"></div>
-        <div style="font-family:var(--font-display);font-size:16px;font-weight:700;margin-bottom:16px;">Schnellstart</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">
-          <div class="bot-card" style="cursor:pointer" onclick="showPage('bots');openCreateModal()">
-            <div style="font-size:28px;margin-bottom:10px;">➕</div>
-            <div style="font-weight:700;margin-bottom:4px;">Neuen Bot erstellen</div>
-            <div style="font-size:12px;color:var(--muted)">Bot hinzufügen und sofort starten</div>
+        <div style="font-family:var(--display);font-weight:700;margin-bottom:14px">Schnellzugriff</div>
+        <div class="bots-grid">
+          <div class="bot-card" style="cursor:pointer" onclick="nav('bots');setTimeout(openCreate,100)">
+            <div style="font-size:28px;margin-bottom:8px">➕</div>
+            <div class="bot-name">Neuen Bot erstellen</div>
+            <div class="bot-meta">Bot hinzufügen und sofort starten</div>
           </div>
-          <div class="bot-card" style="cursor:pointer" onclick="showPage('console')">
-            <div style="font-size:28px;margin-bottom:10px;">🖥</div>
-            <div style="font-weight:700;margin-bottom:4px;">Live Konsole</div>
-            <div style="font-size:12px;color:var(--muted)">Logs in Echtzeit beobachten</div>
+          <div class="bot-card" style="cursor:pointer" onclick="nav('packages')">
+            <div style="font-size:28px;margin-bottom:8px">📦</div>
+            <div class="bot-name">Packages installieren</div>
+            <div class="bot-meta">pip install discord.py und mehr</div>
           </div>
-          <div class="bot-card" style="cursor:pointer" onclick="showPage('files')">
-            <div style="font-size:28px;margin-bottom:10px;">📝</div>
-            <div style="font-weight:700;margin-bottom:4px;">Code bearbeiten</div>
-            <div style="font-size:12px;color:var(--muted)">Dateien direkt im Browser editieren</div>
+          <div class="bot-card" style="cursor:pointer" onclick="nav('upload')">
+            <div style="font-size:28px;margin-bottom:8px">⬆</div>
+            <div class="bot-name">Dateien hochladen</div>
+            <div class="bot-meta">Drag & Drop Upload</div>
+          </div>
+          <div class="bot-card" style="cursor:pointer" onclick="nav('backup')">
+            <div style="font-size:28px;margin-bottom:8px">💾</div>
+            <div class="bot-name">Backup erstellen</div>
+            <div class="bot-meta">Bot als ZIP herunterladen</div>
           </div>
         </div>
       </div>
 
-      <!-- Bots -->
+      <!-- BOTS -->
       <div class="page" id="page-bots">
-        <div class="page-header">
-          <div class="page-title">Meine Bots <small id="bots-count">0 Bots</small></div>
-          <button class="btn" onclick="openCreateModal()">➕ Bot hinzufügen</button>
+        <div class="page-hdr">
+          <div class="page-title">Meine Bots <small id="bot-count">0 Bots</small></div>
+          <div class="page-hdr-actions">
+            <button class="btn btn-sm" onclick="loadBots()">🔄 Refresh</button>
+            <button class="btn btn-sm" onclick="openCreate()">➕ Bot hinzufügen</button>
+          </div>
         </div>
         <div class="bots-grid" id="bots-grid">
-          <div class="empty-state" id="bots-empty" style="grid-column:1/-1">
-            <div class="empty-icon">🤖</div>
+          <div class="empty" id="bots-empty" style="grid-column:1/-1">
+            <div class="empty-ico">🤖</div>
             <div>Noch keine Bots vorhanden.</div>
-            <div style="margin-top:12px"><button class="btn" onclick="openCreateModal()">Ersten Bot erstellen</button></div>
+            <button class="btn" style="margin-top:14px" onclick="openCreate()">Ersten Bot erstellen</button>
           </div>
         </div>
       </div>
 
-      <!-- Console -->
+      <!-- CONSOLE -->
       <div class="page" id="page-console">
-        <div class="page-header">
-          <div class="page-title">Konsole <small>Live-Logs deiner Bots</small></div>
-          <div class="flex-center">
-            <select id="console-bot-select" onchange="switchConsoleBot(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-family:var(--font-mono);font-size:13px;cursor:pointer;">
+        <div class="page-hdr">
+          <div class="page-title">Konsole <small>Live-Logs</small></div>
+          <div class="page-hdr-actions">
+            <select id="con-sel" onchange="switchConsole(this.value)" style="width:180px">
               <option value="">— Bot wählen —</option>
             </select>
-            <button class="btn btn-ghost btn-sm" onclick="clearConsole()">🗑 Leeren</button>
+            <button class="btn btn-sm btn-ghost" onclick="document.getElementById('con-out').innerHTML=''">🗑 Leeren</button>
           </div>
         </div>
-        <div class="console-box" id="console-output">
-          <div style="color:var(--muted);font-size:12px;">Wähle einen Bot aus, um die Logs zu sehen...</div>
+        <div class="console-wrap">
+          <div class="console-bar">
+            <div class="dot-red"></div><div class="dot-yellow"></div><div class="dot-green"></div>
+            <span id="con-title" style="margin-left:8px">Kein Bot gewählt</span>
+          </div>
+          <div class="console-out" id="con-out">
+            <span style="color:var(--muted)">Wähle einen Bot um Logs zu sehen...</span>
+          </div>
         </div>
       </div>
 
-      <!-- Files -->
+      <!-- FILES -->
       <div class="page" id="page-files">
-        <div class="page-header">
-          <div class="page-title">Dateien <small>Code-Editor</small></div>
-          <div class="flex-center">
-            <select id="files-bot-select" onchange="loadBotFiles(this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-family:var(--font-mono);font-size:13px;cursor:pointer;">
+        <div class="page-hdr">
+          <div class="page-title">Dateien <small>Code Editor</small></div>
+          <div class="page-hdr-actions">
+            <select id="files-sel" onchange="loadFileTree(this.value)" style="width:160px">
               <option value="">— Bot wählen —</option>
             </select>
-            <button class="btn btn-sm btn-ghost" onclick="saveCurrentFile()" id="save-btn" style="display:none">💾 Speichern</button>
+            <button class="btn btn-xs btn-ghost" onclick="promptNewFile()" id="btn-newfile" style="display:none">📄 Neue Datei</button>
+            <button class="btn btn-xs btn-ghost" onclick="promptNewFolder()" id="btn-newfolder" style="display:none">📁 Ordner</button>
+            <button class="btn btn-xs btn-green" onclick="saveFile()" id="btn-save" style="display:none">💾 Speichern</button>
           </div>
         </div>
-        <div class="editor-layout" id="editor-layout">
-          <div class="file-list" id="file-list">
-            <div style="padding:16px;font-size:12px;color:var(--muted);">Wähle einen Bot</div>
+        <div class="fm-layout">
+          <div class="fm-tree" id="fm-tree">
+            <div style="padding:14px;font-size:12px;color:var(--muted)">Wähle einen Bot</div>
           </div>
-          <div class="editor-area">
-            <div class="editor-toolbar">
-              <span class="editor-filename" id="editor-filename">Keine Datei gewählt</span>
+          <div class="fm-editor">
+            <div class="fm-toolbar">
+              <div class="fm-toolbar-left">
+                <span class="fm-filename" id="fm-filename">Keine Datei gewählt</span>
+              </div>
             </div>
-            <textarea class="code-editor" id="code-editor" placeholder="Wähle eine Datei..." spellcheck="false"></textarea>
+            <textarea class="code" id="code-editor" placeholder="Wähle eine Datei..." spellcheck="false"
+              onkeydown="if(event.ctrlKey&&event.key==='s'){event.preventDefault();saveFile()}"></textarea>
           </div>
         </div>
+      </div>
+
+      <!-- PACKAGES -->
+      <div class="page" id="page-packages">
+        <div class="page-hdr">
+          <div class="page-title">Packages <small>pip &amp; npm installieren</small></div>
+          <select id="pkg-sel" onchange="loadPackages(this.value)" style="width:180px">
+            <option value="">— Bot wählen —</option>
+          </select>
+        </div>
+        <div class="grid2">
+          <div class="pkg-box">
+            <div style="font-family:var(--display);font-weight:700;margin-bottom:4px">📦 Package installieren</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:14px">pip oder npm install</div>
+            <div class="form-row">
+              <label>Package Name</label>
+              <input type="text" id="pkg-name" placeholder="z.B. discord.py" onkeydown="if(event.key==='Enter')installPkg()">
+            </div>
+            <div class="form-row">
+              <label>Manager</label>
+              <select id="pkg-mgr">
+                <option value="pip">pip (Python)</option>
+                <option value="npm">npm (Node.js)</option>
+              </select>
+            </div>
+            <button class="btn" onclick="installPkg()" style="margin-top:4px">⬇ Installieren</button>
+            <div class="install-output" id="install-out"></div>
+          </div>
+          <div class="pkg-box">
+            <div style="font-family:var(--display);font-weight:700;margin-bottom:4px">📋 Installierte Packages</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px">requirements.txt / package.json</div>
+            <div class="pkg-list" id="pkg-list">
+              <div style="color:var(--muted);font-size:12px;padding:8px 0">Wähle einen Bot</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACKUP -->
+      <div class="page" id="page-backup">
+        <div class="page-hdr">
+          <div class="page-title">Backup <small>Bot als ZIP sichern</small></div>
+          <select id="bak-sel" style="width:180px">
+            <option value="">— Bot wählen —</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="backup-card">
+            <div class="backup-icon">⬇</div>
+            <div>
+              <div style="font-family:var(--display);font-weight:700;margin-bottom:6px">Bot herunterladen</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Lädt alle Dateien des Bots als ZIP herunter (ohne node_modules)</div>
+              <button class="btn" onclick="downloadBackup()">💾 ZIP herunterladen</button>
+            </div>
+          </div>
+          <div class="backup-card">
+            <div class="backup-icon">⬆</div>
+            <div style="flex:1">
+              <div style="font-family:var(--display);font-weight:700;margin-bottom:6px">Bot wiederherstellen</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Lade eine ZIP-Datei hoch um einen Bot wiederherzustellen</div>
+              <input type="file" id="restore-file" accept=".zip" style="margin-bottom:10px">
+              <button class="btn btn-yellow" onclick="restoreBackup()">♻ Wiederherstellen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPLOAD -->
+      <div class="page" id="page-upload">
+        <div class="page-hdr">
+          <div class="page-title">Datei Upload <small>Drag &amp; Drop</small></div>
+          <select id="upl-sel" style="width:180px">
+            <option value="">— Bot wählen —</option>
+          </select>
+        </div>
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <div class="drop-icon">📂</div>
+          <div style="margin-bottom:6px;font-weight:500">Dateien hierher ziehen oder klicken</div>
+          <div style="font-size:11px;color:var(--muted)">Alle Dateitypen erlaubt • Mehrere Dateien möglich</div>
+          <input type="file" id="file-input" multiple style="display:none" onchange="handleFileInput(this.files)">
+        </div>
+        <div id="upload-status" style="margin-top:14px;font-size:12px;color:var(--muted)"></div>
+        <div id="upload-list" style="margin-top:10px;display:flex;flex-direction:column;gap:6px"></div>
       </div>
 
     </main>
   </div>
 </div>
 
-<!-- Create Modal -->
-<div class="modal-overlay" id="create-modal">
+<!-- CREATE MODAL -->
+<div class="overlay" id="modal-create">
   <div class="modal">
-    <h2>🤖 Neuen Bot hinzufügen</h2>
-    <div class="form-group">
-      <label class="form-label">Bot Name</label>
-      <input type="text" id="new-bot-name" placeholder="mein-bot">
+    <h2>🤖 Neuen Bot erstellen</h2>
+    <div class="form-row"><label>Bot Name</label><input type="text" id="c-name" placeholder="mein-bot"></div>
+    <div class="form-row"><label>Discord Bot Token</label><input type="text" id="c-token" placeholder="MTxxxxxxxx..."></div>
+    <div class="form-row">
+      <label>Sprache</label>
+      <select id="c-lang" onchange="updateMainFile()">
+        <option value="python">Python (discord.py)</option>
+        <option value="node">Node.js (discord.js)</option>
+      </select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Discord Bot Token</label>
-      <input type="text" id="new-bot-token" placeholder="MTxxxxxxxx...">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Start-Datei</label>
-      <input type="text" id="new-bot-main" value="index.js" placeholder="index.js">
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeCreateModal()">Abbrechen</button>
-      <button class="btn" onclick="createBot()">➕ Bot erstellen</button>
+    <div class="form-row"><label>Start-Datei</label><input type="text" id="c-main" value="main.py"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal('modal-create')">Abbrechen</button>
+      <button class="btn" onclick="createBot()">➕ Erstellen</button>
     </div>
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-// ── Config ──
-const API = (window.localStorage.getItem('panel_api') || 'https://karlsruherp-bot-host-production.up.railway.app') + '/api';
+const BACKEND = 'https://karlsruherp-bot-host-production.up.railway.app';
+let API = BACKEND + '/api';
 let TOKEN = '';
-let currentBotConsole = '';
-let currentFile = '';
-let currentFileBot = '';
 let socket = null;
+let currentConsoleBot = '';
+let currentFileBot = '';
+let currentFilePath = '';
 
-// ── Login ──
-async function doLogin() {
-  const pw = document.getElementById('pw-input').value;
+// ── AUTH ──
+async function login() {
+  const pw = document.getElementById('pw').value;
   try {
-    const r = await fetch(`${API}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pw })
+    const r = await fetch(API + '/login', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({password: pw})
     });
     const d = await r.json();
     if (d.token) {
       TOKEN = d.token;
-      sessionStorage.setItem('token', TOKEN);
-      showApp();
-    } else {
-      document.getElementById('login-error').style.display = 'block';
-    }
-  } catch {
-    document.getElementById('login-error').textContent = 'Verbindung zum Backend fehlgeschlagen!';
-    document.getElementById('login-error').style.display = 'block';
-  }
+      sessionStorage.setItem('token', d.token);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      initSocket(BACKEND);
+      loadAll();
+    } else { showErr('Falsches Passwort!'); }
+  } catch { showErr('Backend nicht erreichbar!'); }
 }
 
-function doLogout() {
-  TOKEN = '';
-  sessionStorage.removeItem('token');
+function showErr(m) {
+  const e = document.getElementById('login-err');
+  e.textContent = m; e.style.display = 'block';
+}
+
+function logout() {
+  TOKEN = ''; sessionStorage.clear();
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
 }
 
-function showApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  loadDashboard();
-  // Connect socket
-  if (typeof io !== 'undefined') {
-    socket = io(API.replace('/api', ''));
-  }
+function initSocket(url) {
+  socket = io(url);
+  socket.on('log', (l) => {
+    if (l.bot === currentConsoleBot || !l.bot) appendLog(l);
+  });
 }
 
-// ── Navigation ──
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  document.getElementById('nav-' + name).classList.add('active');
-  if (name === 'bots') loadBots();
-  if (name === 'dashboard') loadDashboard();
-}
-
-// ── API Helper ──
-async function api(path, opts = {}) {
+async function authFetch(path, opts={}) {
   const r = await fetch(API + path, {
     ...opts,
-    headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json', ...opts.headers }
+    headers: {'Authorization':'Bearer '+TOKEN,'Content-Type':'application/json',...(opts.headers||{})}
   });
+  return r;
+}
+async function api(path, opts={}) {
+  const r = await authFetch(path, opts);
   return r.json();
 }
 
-// ── Dashboard ──
-async function loadDashboard() {
+// ── NAVIGATION ──
+function nav(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  if (name==='bots') loadBots();
+  if (name==='dashboard') loadDash();
+}
+
+// ── LOAD ALL ──
+function loadAll() {
+  loadDash();
+  loadBotSelects();
+}
+
+async function loadDash() {
   try {
     const bots = await api('/bots');
-    const online = bots.filter(b => b.status === 'online').length;
-    document.getElementById('stat-total').textContent = bots.length;
-    document.getElementById('stat-online').textContent = online;
-    document.getElementById('stat-offline').textContent = bots.length - online;
+    const on = bots.filter(b=>b.status==='online').length;
+    document.getElementById('s-total').textContent = bots.length;
+    document.getElementById('s-online').textContent = on;
+    document.getElementById('s-offline').textContent = bots.length - on;
   } catch {}
 }
 
-// ── Bots ──
-async function loadBots() {
+async function loadBotSelects() {
   try {
     const bots = await api('/bots');
-    renderBots(bots);
-    // Update selects
-    ['console-bot-select','files-bot-select'].forEach(id => {
-      const sel = document.getElementById(id);
-      const val = sel.value;
-      sel.innerHTML = '<option value="">— Bot wählen —</option>';
+    ['con-sel','files-sel','pkg-sel','bak-sel','upl-sel'].forEach(id => {
+      const s = document.getElementById(id);
+      const v = s.value;
+      s.innerHTML = '<option value="">— Bot wählen —</option>';
       bots.forEach(b => {
         const o = document.createElement('option');
-        o.value = b.name; o.textContent = b.name;
-        sel.appendChild(o);
+        o.value = b.name; o.textContent = b.name + (b.status==='online'?' ✅':' ⚫');
+        s.appendChild(o);
       });
-      if (val) sel.value = val;
+      if (v) s.value = v;
     });
-    document.getElementById('bots-count').textContent = bots.length + ' Bots';
-  } catch (e) { console.error(e); }
+    document.getElementById('bot-count').textContent = bots.length + ' Bots';
+    return bots;
+  } catch { return []; }
+}
+
+// ── BOTS ──
+async function loadBots() {
+  const bots = await loadBotSelects();
+  renderBots(bots);
 }
 
 function renderBots(bots) {
-  const grid = document.getElementById('bots-grid');
+  const g = document.getElementById('bots-grid');
   const empty = document.getElementById('bots-empty');
-  if (bots.length === 0) { empty.style.display = 'block'; grid.innerHTML = ''; grid.appendChild(empty); return; }
-  empty.style.display = 'none';
-  grid.innerHTML = '';
-  bots.forEach(bot => {
-    const online = bot.status === 'online';
+  if (!bots.length) { empty.style.display='block'; g.innerHTML=''; g.appendChild(empty); return; }
+  empty.style.display='none'; g.innerHTML='';
+  bots.forEach(b => {
+    const on = b.status==='online';
     const card = document.createElement('div');
-    card.className = 'bot-card';
-    card.innerHTML = `
-      <div class="bot-card-header">
-        <div>
-          <div class="bot-name">${bot.name}</div>
-          <div class="bot-meta">${bot.mainFile || 'index.js'}</div>
-        </div>
-        <span class="status-badge ${online ? 'status-online' : 'status-offline'}">
-          <span class="status-dot"></span>${online ? 'Online' : 'Offline'}
-        </span>
+    card.className='bot-card';
+    card.innerHTML=`
+      <div class="bot-card-hdr">
+        <div><div class="bot-name">${b.name}</div><div class="bot-meta">${b.mainFile||'main.py'} · ${b.lang||'python'}</div></div>
+        <span class="badge ${on?'badge-on':'badge-off'}"><span class="dot"></span>${on?'Online':'Offline'}</span>
       </div>
       <div class="bot-actions">
-        ${online
-          ? `<button class="btn btn-sm btn-danger" onclick="stopBot('${bot.name}')">⏹ Stoppen</button>`
-          : `<button class="btn btn-sm btn-success" onclick="startBot('${bot.name}')">▶ Starten</button>`}
-        <button class="btn btn-sm btn-ghost" onclick="openConsoleFor('${bot.name}')">🖥 Logs</button>
-        <button class="btn btn-sm btn-ghost" onclick="openFilesFor('${bot.name}')">📁 Dateien</button>
-        <button class="btn btn-sm btn-danger" style="background:rgba(241,70,104,0.15);color:var(--red)" onclick="deleteBot('${bot.name}')">🗑</button>
-      </div>
-    `;
-    grid.appendChild(card);
+        ${on
+          ? `<button class="btn btn-sm btn-red" onclick="stopBot('${b.name}')">⏹ Stop</button>`
+          : `<button class="btn btn-sm btn-green" onclick="startBot('${b.name}')">▶ Start</button>`}
+        <button class="btn btn-sm btn-ghost" onclick="openConsoleFor('${b.name}')">🖥 Logs</button>
+        <button class="btn btn-sm btn-ghost" onclick="openFilesFor('${b.name}')">📁 Files</button>
+        <button class="btn btn-sm btn-ghost" onclick="openPackagesFor('${b.name}')">📦 Pkg</button>
+        <button class="btn btn-xs btn-red" style="background:rgba(241,70,104,.12);color:var(--red)" onclick="deleteBot('${b.name}')">🗑</button>
+      </div>`;
+    g.appendChild(card);
   });
 }
 
 async function startBot(name) {
-  await api(`/bots/${name}/start`, { method: 'POST' });
-  setTimeout(loadBots, 800);
+  await api('/bots/'+name+'/start',{method:'POST'});
+  setTimeout(()=>{loadBots();loadDash()},900);
 }
 async function stopBot(name) {
-  await api(`/bots/${name}/stop`, { method: 'POST' });
-  setTimeout(loadBots, 800);
+  await api('/bots/'+name+'/stop',{method:'POST'});
+  setTimeout(()=>{loadBots();loadDash()},900);
 }
 async function deleteBot(name) {
-  if (!confirm(`Bot "${name}" wirklich löschen?`)) return;
-  await api(`/bots/${name}`, { method: 'DELETE' });
-  loadBots();
+  if(!confirm('Bot "'+name+'" wirklich löschen?')) return;
+  await api('/bots/'+name,{method:'DELETE'});
+  loadBots(); loadDash();
 }
 
-// ── Create Modal ──
-function openCreateModal() { document.getElementById('create-modal').classList.add('open'); }
-function closeCreateModal() { document.getElementById('create-modal').classList.remove('open'); }
-
+// CREATE
+function openCreate() { document.getElementById('modal-create').classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function updateMainFile() {
+  const lang = document.getElementById('c-lang').value;
+  document.getElementById('c-main').value = lang==='python' ? 'main.py' : 'index.js';
+}
 async function createBot() {
-  const name = document.getElementById('new-bot-name').value.trim().replace(/\s+/g,'-');
-  const token = document.getElementById('new-bot-token').value.trim();
-  const mainFile = document.getElementById('new-bot-main').value.trim() || 'index.js';
-  if (!name || !token) return alert('Name und Token sind Pflicht!');
-  await api('/bots/create', { method: 'POST', body: JSON.stringify({ name, token, mainFile }) });
-  closeCreateModal();
+  const name = document.getElementById('c-name').value.trim().replace(/\s+/g,'-');
+  const token = document.getElementById('c-token').value.trim();
+  const mainFile = document.getElementById('c-main').value.trim();
+  const lang = document.getElementById('c-lang').value;
+  if(!name||!token) return alert('Name und Token sind Pflichtfelder!');
+  await api('/bots/create',{method:'POST',body:JSON.stringify({name,token,mainFile,lang})});
+  closeModal('modal-create');
   loadBots();
 }
 
-// ── Console ──
+// ── CONSOLE ──
 function openConsoleFor(name) {
-  showPage('console');
-  document.getElementById('console-bot-select').value = name;
-  switchConsoleBot(name);
+  nav('console');
+  document.getElementById('con-sel').value = name;
+  switchConsole(name);
 }
 
-function switchConsoleBot(name) {
-  currentBotConsole = name;
-  const out = document.getElementById('console-output');
+function switchConsole(name) {
+  currentConsoleBot = name;
+  const out = document.getElementById('con-out');
   out.innerHTML = '';
+  document.getElementById('con-title').textContent = name || 'Kein Bot gewählt';
   if (!name) return;
-  // Load existing logs
-  api(`/logs/${name}`).then(logs => {
+  if (socket) socket.emit('subscribe-logs', name);
+  api('/logs/'+name).then(logs => {
     logs.forEach(l => appendLog(l));
     out.scrollTop = out.scrollHeight;
   });
-  // Subscribe to live
-  if (socket) {
-    socket.emit('subscribe-logs', name);
-    socket.off('log');
-    socket.on('log', (l) => {
-      if (currentBotConsole === name) { appendLog(l); out.scrollTop = out.scrollHeight; }
-    });
-  }
 }
 
 function appendLog(l) {
-  const out = document.getElementById('console-output');
-  const div = document.createElement('div');
-  div.className = 'log-line';
-  const type = l.msg.startsWith('[stderr]') ? 'log-stderr' : l.msg.startsWith('[system]') ? 'log-system' : 'log-stdout';
-  const time = new Date(l.time).toLocaleTimeString('de-DE');
-  div.innerHTML = `<span class="log-time">${time}</span><span class="${type}">${escHtml(l.msg)}</span>`;
-  out.appendChild(div);
+  if (currentConsoleBot && l.bot && l.bot !== currentConsoleBot) return;
+  const out = document.getElementById('con-out');
+  const d = document.createElement('div');
+  d.className = 'log-line';
+  const cls = l.msg.startsWith('[stderr]')?'log-err':l.msg.startsWith('[system]')?'log-sys':'log-out';
+  const t = new Date(l.time).toLocaleTimeString('de-DE');
+  d.innerHTML = `<span class="log-t">${t}</span><span class="${cls}">${esc(l.msg)}</span>`;
+  out.appendChild(d);
+  out.scrollTop = out.scrollHeight;
 }
 
-function clearConsole() { document.getElementById('console-output').innerHTML = ''; }
-
-// ── Files ──
+// ── FILES ──
 function openFilesFor(name) {
-  showPage('files');
-  document.getElementById('files-bot-select').value = name;
-  loadBotFiles(name);
+  nav('files');
+  document.getElementById('files-sel').value = name;
+  loadFileTree(name);
 }
 
-async function loadBotFiles(botName) {
+async function loadFileTree(botName) {
   currentFileBot = botName;
-  currentFile = '';
-  document.getElementById('editor-filename').textContent = 'Keine Datei gewählt';
+  currentFilePath = '';
+  document.getElementById('fm-filename').textContent = 'Keine Datei gewählt';
   document.getElementById('code-editor').value = '';
-  document.getElementById('save-btn').style.display = 'none';
-  const list = document.getElementById('file-list');
-  if (!botName) { list.innerHTML = '<div style="padding:16px;font-size:12px;color:var(--muted)">Wähle einen Bot</div>'; return; }
+  ['btn-save','btn-newfile','btn-newfolder'].forEach(id => document.getElementById(id).style.display = botName ? 'inline-flex' : 'none');
+  const tree = document.getElementById('fm-tree');
+  if (!botName) { tree.innerHTML = '<div style="padding:14px;font-size:12px;color:var(--muted)">Wähle einen Bot</div>'; return; }
   try {
-    const files = await api(`/files/${botName}`);
-    list.innerHTML = '';
-    files.forEach(f => {
-      const item = document.createElement('div');
-      item.className = 'file-item';
-      item.textContent = '📄 ' + f.name;
-      item.onclick = () => loadFile(botName, f.name, item);
-      list.appendChild(item);
-    });
-  } catch {}
+    const files = await api('/files/'+botName);
+    renderTree(files, tree, '');
+  } catch(e) { tree.innerHTML = '<div style="padding:14px;color:var(--red);font-size:12px">Fehler: '+e.message+'</div>'; }
 }
 
-async function loadFile(botName, fileName, el) {
-  currentFile = fileName;
-  document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
+function renderTree(items, container, prefix) {
+  container.innerHTML = '';
+  items.sort((a,b) => {
+    if (a.type==='dir' && b.type!=='dir') return -1;
+    if (a.type!=='dir' && b.type==='dir') return 1;
+    return a.name.localeCompare(b.name);
+  });
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'tree-item';
+    el.style.paddingLeft = (12 + prefix.split('/').filter(Boolean).length * 14) + 'px';
+    if (item.type === 'dir') {
+      el.innerHTML = `<span class="tree-icon">📁</span><span class="tree-name">${item.name}/</span><span class="tree-del" onclick="event.stopPropagation();delFile('${item.path}')">✕</span>`;
+      container.appendChild(el);
+      if (item.children?.length) {
+        const sub = document.createElement('div');
+        container.appendChild(sub);
+        renderTree(item.children, sub, item.path);
+      }
+    } else {
+      const ext = item.name.split('.').pop();
+      const icon = ext==='py'?'🐍':ext==='js'?'⚡':ext==='json'?'📋':ext==='md'?'📝':ext==='txt'?'📄':'📄';
+      el.innerHTML = `<span class="tree-icon">${icon}</span><span class="tree-name">${item.name}</span><span class="tree-del" onclick="event.stopPropagation();delFile('${item.path}')">✕</span>`;
+      el.onclick = () => openFile(item.path, el);
+      container.appendChild(el);
+    }
+  });
+}
+
+async function openFile(filePath, el) {
+  currentFilePath = filePath;
+  document.querySelectorAll('.tree-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('editor-filename').textContent = fileName;
-  document.getElementById('save-btn').style.display = 'inline-flex';
-  const { content } = await api(`/files/${botName}/${fileName}`);
-  document.getElementById('code-editor').value = content;
+  document.getElementById('fm-filename').textContent = filePath;
+  document.getElementById('btn-save').style.display = 'inline-flex';
+  try {
+    const r = await api('/files/'+currentFileBot+'/file/'+filePath);
+    document.getElementById('code-editor').value = r.content;
+  } catch { document.getElementById('code-editor').value = '// Fehler beim Laden'; }
 }
 
-async function saveCurrentFile() {
-  if (!currentFileBot || !currentFile) return;
+async function saveFile() {
+  if (!currentFileBot || !currentFilePath) return;
   const content = document.getElementById('code-editor').value;
-  await api(`/files/${currentFileBot}/${currentFile}`, { method: 'PUT', body: JSON.stringify({ content }) });
-  const btn = document.getElementById('save-btn');
+  await api('/files/'+currentFileBot+'/file/'+currentFilePath, {method:'PUT',body:JSON.stringify({content})});
+  const btn = document.getElementById('btn-save');
   btn.textContent = '✅ Gespeichert!';
-  setTimeout(() => btn.textContent = '💾 Speichern', 1500);
+  setTimeout(()=>btn.textContent='💾 Speichern', 1500);
 }
 
-// ── Utils ──
-function escHtml(t) {
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+async function delFile(filePath) {
+  if (!confirm('Löschen: '+filePath+'?')) return;
+  await api('/files/'+currentFileBot+'/file/'+filePath, {method:'DELETE'});
+  loadFileTree(currentFileBot);
 }
 
-// Auto-login if token in session
-const savedToken = sessionStorage.getItem('token');
-if (savedToken) { TOKEN = savedToken; showApp(); }
+function promptNewFile() {
+  const name = prompt('Dateiname (z.B. commands/ping.py):');
+  if (!name) return;
+  api('/files/'+currentFileBot+'/file', {method:'POST',body:JSON.stringify({filePath:name,content:''})})
+    .then(()=>loadFileTree(currentFileBot));
+}
+
+function promptNewFolder() {
+  const name = prompt('Ordnername:');
+  if (!name) return;
+  api('/files/'+currentFileBot+'/folder', {method:'POST',body:JSON.stringify({folderPath:name})})
+    .then(()=>loadFileTree(currentFileBot));
+}
+
+// ── PACKAGES ──
+function openPackagesFor(name) {
+  nav('packages');
+  document.getElementById('pkg-sel').value = name;
+  loadPackages(name);
+}
+
+async function loadPackages(botName) {
+  const list = document.getElementById('pkg-list');
+  if (!botName) { list.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:8px 0">Wähle einen Bot</div>'; return; }
+  try {
+    const d = await api('/packages/'+botName+'/packages');
+    const all = [...d.pip.map(p=>({name:p,mgr:'pip'})),...d.npm.map(p=>({name:p,mgr:'npm'}))];
+    if (!all.length) { list.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px 0">Keine Packages gefunden</div>'; return; }
+    list.innerHTML = all.map(p=>`<div class="pkg-item"><span class="pkg-name">${p.name}</span><span class="tag">${p.mgr}</span></div>`).join('');
+  } catch { list.innerHTML='<div style="color:var(--red);font-size:12px">Fehler</div>'; }
+}
+
+async function installPkg() {
+  const bot = document.getElementById('pkg-sel').value;
+  const pkg = document.getElementById('pkg-name').value.trim();
+  const mgr = document.getElementById('pkg-mgr').value;
+  if (!bot) return alert('Bitte Bot wählen!');
+  if (!pkg) return alert('Bitte Package-Name eingeben!');
+
+  const out = document.getElementById('install-out');
+  out.style.display = 'block';
+  out.textContent = '⏳ Installiere '+pkg+'...\n';
+
+  try {
+    const r = await authFetch('/packages/'+bot+'/install', {
+      method:'POST', body:JSON.stringify({pkg,manager:mgr}),
+      headers:{'Authorization':'Bearer '+TOKEN,'Content-Type':'application/json'}
+    });
+    const reader = r.body.getReader();
+    const dec = new TextDecoder();
+    while (true) {
+      const {done,value} = await reader.read();
+      if (done) break;
+      const text = dec.decode(value);
+      text.split('\n').forEach(line => {
+        if (line.startsWith('data: ')) {
+          const msg = line.slice(6);
+          if (msg === '__DONE__:0') { out.textContent += '\n✅ Erfolgreich installiert!'; loadPackages(bot); }
+          else if (msg.startsWith('__DONE__')) { out.textContent += '\n❌ Fehler beim Installieren'; }
+          else { out.textContent += msg + '\n'; out.scrollTop = out.scrollHeight; }
+        }
+      });
+    }
+  } catch(e) { out.textContent += '\n❌ Fehler: '+e.message; }
+}
+
+// ── BACKUP ──
+async function downloadBackup() {
+  const bot = document.getElementById('bak-sel').value;
+  if (!bot) return alert('Bitte Bot wählen!');
+  const url = API+'/backup/'+bot+'/download';
+  const a = document.createElement('a');
+  a.href = url;
+  a.setAttribute('download', bot+'-backup.zip');
+  // Add auth via query (simple approach)
+  const r = await authFetch('/backup/'+bot+'/download');
+  const blob = await r.blob();
+  const burl = URL.createObjectURL(blob);
+  a.href = burl;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(burl);
+}
+
+async function restoreBackup() {
+  const bot = document.getElementById('bak-sel').value;
+  const file = document.getElementById('restore-file').files[0];
+  if (!bot) return alert('Bitte Bot wählen!');
+  if (!file) return alert('Bitte ZIP-Datei wählen!');
+  const buf = await file.arrayBuffer();
+  const r = await fetch(API+'/backup/'+bot+'/restore', {
+    method:'POST',
+    headers:{'Authorization':'Bearer '+TOKEN,'Content-Type':'application/zip'},
+    body: buf
+  });
+  const d = await r.json();
+  if (d.success) alert('✅ Bot wiederhergestellt!');
+  else alert('❌ Fehler: '+d.error);
+}
+
+// ── UPLOAD / DRAG & DROP ──
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('over');
+  handleFileInput(e.dataTransfer.files);
+});
+
+function handleFileInput(files) {
+  const bot = document.getElementById('upl-sel').value;
+  if (!bot) { alert('Bitte zuerst einen Bot wählen!'); return; }
+  const list = document.getElementById('upload-list');
+  list.innerHTML = '';
+  Array.from(files).forEach(f => {
+    const row = document.createElement('div');
+    row.style = 'display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--s1);border:1px solid var(--border);border-radius:8px;font-size:12px';
+    row.innerHTML = `<span style="flex:1">📄 ${f.name} <span style="color:var(--muted)">(${(f.size/1024).toFixed(1)} KB)</span></span><span id="upl-${f.name.replace(/\W/g,'_')}" style="color:var(--muted)">⏳</span>`;
+    list.appendChild(row);
+    uploadFile(bot, f, row.querySelector('span:last-child'));
+  });
+}
+
+async function uploadFile(bot, file, statusEl) {
+  const fd = new FormData();
+  fd.append('files', file);
+  try {
+    const r = await fetch(API+'/files/'+bot+'/upload', {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+TOKEN},
+      body: fd
+    });
+    const d = await r.json();
+    statusEl.textContent = d.success ? '✅' : '❌';
+    statusEl.style.color = d.success ? 'var(--green)' : 'var(--red)';
+  } catch { statusEl.textContent = '❌'; statusEl.style.color = 'var(--red)'; }
+}
+
+// ── UTILS ──
+function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Auto-login
+const st = sessionStorage.getItem('token');
+if (st) {
+  TOKEN = st;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initSocket(BACKEND);
+  loadAll();
+}
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
 </body>
 </html>
