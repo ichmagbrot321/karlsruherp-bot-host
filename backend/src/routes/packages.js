@@ -6,9 +6,10 @@ const fs = require("fs");
 
 const BOTS_DIR = process.env.BOTS_DIR || path.join(__dirname, "../../bots");
 
+// pip install or npm install a package
 router.post("/:name/install", (req, res) => {
   const { name } = req.params;
-  const { pkg, manager = "pip" } = req.body;
+  const { pkg, manager = "pip" } = req.body; // manager: pip | npm
   const botDir = path.join(BOTS_DIR, name);
 
   if (!fs.existsSync(botDir)) return res.status(404).json({ error: "Bot nicht gefunden" });
@@ -21,8 +22,21 @@ router.post("/:name/install", (req, res) => {
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
-  const proc = spawn(cmd, args, { cwd: botDir });
+  let proc;
+  try {
+    proc = spawn(cmd, args, { cwd: botDir });
+  } catch(e) {
+    res.write(`data: Fehler: ${e.message}\n\n`);
+    res.write(`data: __DONE__:1\n\n`);
+    res.end();
+    return;
+  }
 
+  proc.on("error", (e) => {
+    res.write(`data: Fehler: ${cmd} nicht gefunden! Python/pip nicht installiert.\n\n`);
+    res.write(`data: __DONE__:1\n\n`);
+    res.end();
+  });
   proc.stdout.on("data", (d) => res.write(`data: ${d.toString().trim()}\n\n`));
   proc.stderr.on("data", (d) => res.write(`data: ${d.toString().trim()}\n\n`));
   proc.on("close", (code) => {
@@ -31,14 +45,17 @@ router.post("/:name/install", (req, res) => {
   });
 });
 
+// List installed packages (requirements.txt or package.json)
 router.get("/:name/packages", (req, res) => {
   const botDir = path.join(BOTS_DIR, req.params.name);
   const reqFile = path.join(botDir, "requirements.txt");
   const pkgFile = path.join(botDir, "package.json");
+
   const result = { pip: [], npm: [] };
 
   if (fs.existsSync(reqFile)) {
-    result.pip = fs.readFileSync(reqFile, "utf8").split("\n").map(l => l.trim()).filter(Boolean);
+    result.pip = fs.readFileSync(reqFile, "utf8")
+      .split("\n").map(l => l.trim()).filter(Boolean);
   }
   if (fs.existsSync(pkgFile)) {
     try {
@@ -50,6 +67,7 @@ router.get("/:name/packages", (req, res) => {
   res.json(result);
 });
 
+// Save requirements.txt
 router.post("/:name/requirements", (req, res) => {
   const { packages } = req.body;
   const botDir = path.join(BOTS_DIR, req.params.name);
