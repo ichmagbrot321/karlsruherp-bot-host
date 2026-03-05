@@ -519,9 +519,12 @@ async function loadBots() {
 
 function renderBots(bots) {
   const g = document.getElementById('bots-grid');
-  const empty = document.getElementById('bots-empty');
-  if (!bots.length) { empty.style.display='block'; g.innerHTML=''; g.appendChild(empty); return; }
-  empty.style.display='none'; g.innerHTML='';
+  if (!g) return;
+  if (!bots.length) {
+    g.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-ico">🤖</div><div>Noch keine Bots vorhanden.</div><button class="btn" style="margin-top:14px" onclick="openCreate()">Ersten Bot erstellen</button></div>';
+    return;
+  }
+  g.innerHTML='';
   bots.forEach(b => {
     const on = b.status==='online';
     const card = document.createElement('div');
