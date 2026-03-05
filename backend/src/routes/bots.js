@@ -9,9 +9,7 @@ if (!fs.existsSync(BOTS_DIR)) fs.mkdirSync(BOTS_DIR, { recursive: true });
 
 router.get("/", (req, res) => {
   try {
-    const bots = fs.existsSync(BOTS_DIR)
-      ? fs.readdirSync(BOTS_DIR).filter(f => fs.statSync(path.join(BOTS_DIR, f)).isDirectory())
-      : [];
+    const bots = fs.readdirSync(BOTS_DIR).filter(f => fs.statSync(path.join(BOTS_DIR, f)).isDirectory());
     const botList = bots.map(name => {
       const configPath = path.join(BOTS_DIR, name, "config.json");
       const config = fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath)) : {};
@@ -29,10 +27,10 @@ router.post("/create", (req, res) => {
   fs.mkdirSync(botDir, { recursive: true });
   fs.writeFileSync(path.join(botDir, "config.json"), JSON.stringify({ name, token, mainFile, lang, createdAt: new Date().toISOString() }, null, 2));
   if (lang === "python") {
-    fs.writeFileSync(path.join(botDir, "main.py"), `import discord\nimport os\n\nclient = discord.Client(intents=discord.Intents.default())\n\n@client.event\nasync def on_ready():\n    print(f'✅ {client.user} ist online!')\n\nclient.run(os.getenv('TOKEN', '${token}'))\n`);
+    fs.writeFileSync(path.join(botDir, "main.py"), `import discord\nimport os\n\nclient = discord.Client(intents=discord.Intents.default())\n\n@client.event\nasync def on_ready():\n    print(f'Bot {client.user} ist online!')\n\nclient.run(os.getenv('TOKEN', '${token}'))\n`);
     fs.writeFileSync(path.join(botDir, "requirements.txt"), "discord.py\n");
   } else {
-    fs.writeFileSync(path.join(botDir, "index.js"), `const { Client, GatewayIntentBits } = require('discord.js');\nconst client = new Client({ intents: [GatewayIntentBits.Guilds] });\nclient.on('ready', () => console.log('✅ ' + client.user.tag + ' ist online!'));\nclient.login(process.env.TOKEN || '${token}');\n`);
+    fs.writeFileSync(path.join(botDir, "index.js"), `const { Client, GatewayIntentBits } = require('discord.js');\nconst client = new Client({ intents: [GatewayIntentBits.Guilds] });\nclient.on('ready', () => console.log('Bot ' + client.user.tag + ' ist online!'));\nclient.login(process.env.TOKEN || '${token}');\n`);
     fs.writeFileSync(path.join(botDir, "package.json"), JSON.stringify({ name, version: "1.0.0", dependencies: { "discord.js": "^14.0.0" } }, null, 2));
   }
   res.json({ success: true, name });
@@ -43,13 +41,31 @@ router.post("/:name/start", (req, res) => {
   const botDir = path.join(BOTS_DIR, name);
   if (!fs.existsSync(botDir)) return res.status(404).json({ error: "Bot nicht gefunden" });
   if (global.botProcesses[name]) return res.status(409).json({ error: "Läuft bereits" });
+
   const config = JSON.parse(fs.readFileSync(path.join(botDir, "config.json")));
-  const cmd = config.lang === "python" ? "python3" : "node";
-  const proc = spawn(cmd, [config.mainFile || "main.py"], {
-    cwd: botDir,
-    env: { ...process.env, TOKEN: config.token }
+  const lang = config.lang || "python";
+  const cmd = lang === "python" ? "python3" : "node";
+  const mainFile = config.mainFile || (lang === "python" ? "main.py" : "index.js");
+
+  let proc;
+  try {
+    proc = spawn(cmd, [mainFile], {
+      cwd: botDir,
+      env: { ...process.env, TOKEN: config.token }
+    });
+  } catch(e) {
+    return res.status(500).json({ error: "Konnte Bot nicht starten: " + e.message });
+  }
+
+  proc.on("error", (e) => {
+    const l = { time: new Date().toISOString(), msg: "[system] Startfehler: " + e.message, bot: name };
+    global.botProcesses[name]?.logs.push(l);
+    global.io.to("bot-" + name).emit("log", l);
+    delete global.botProcesses[name];
   });
+
   global.botProcesses[name] = { process: proc, logs: [] };
+
   proc.stdout.on("data", d => {
     const l = { time: new Date().toISOString(), msg: "[stdout] " + d.toString().trim(), bot: name };
     global.botProcesses[name]?.logs.push(l);
@@ -64,6 +80,7 @@ router.post("/:name/start", (req, res) => {
     global.io.to("bot-" + name).emit("log", { time: new Date().toISOString(), msg: "[system] Bot gestoppt (exit: " + code + ")", bot: name });
     delete global.botProcesses[name];
   });
+
   res.json({ success: true });
 });
 
