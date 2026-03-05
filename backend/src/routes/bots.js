@@ -9,7 +9,8 @@ if (!fs.existsSync(BOTS_DIR)) fs.mkdirSync(BOTS_DIR, { recursive: true });
 
 router.get("/", (req, res) => {
   try {
-    const bots = fs.readdirSync(BOTS_DIR).filter(f => fs.statSync(path.join(BOTS_DIR, f)).isDirectory());
+    const IGNORE = ["lost+found", ".DS_Store"];
+    const bots = fs.readdirSync(BOTS_DIR).filter(f => !IGNORE.includes(f) && fs.statSync(path.join(BOTS_DIR, f)).isDirectory());
     const botList = bots.map(name => {
       const configPath = path.join(BOTS_DIR, name, "config.json");
       const config = fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath)) : {};
