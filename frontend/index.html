@@ -428,6 +428,7 @@ async function login() {
     if (d.token) {
       TOKEN = d.token;
       sessionStorage.setItem('token', d.token);
+      localStorage.setItem('token', d.token);
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       initSocket(BACKEND);
@@ -455,6 +456,7 @@ function initSocket(url) {
 }
 
 async function authFetch(path, opts={}) {
+  if (!TOKEN) TOKEN = sessionStorage.getItem('token') || localStorage.getItem('token') || '';
   const r = await fetch(API + path, {
     ...opts,
     headers: {'Authorization':'Bearer '+TOKEN,'Content-Type':'application/json',...(opts.headers||{})}
@@ -832,7 +834,7 @@ async function uploadFile(bot, file, statusEl) {
 function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // Auto-login
-const st = sessionStorage.getItem('token');
+const st = sessionStorage.getItem('token') || localStorage.getItem('token');
 if (st) {
   TOKEN = st;
   document.getElementById('login-screen').style.display = 'none';
